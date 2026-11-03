@@ -798,8 +798,9 @@
     showQuote();
     dateInput.value=todayISO();
     // PIN check — chỉ hiện overlay khi đã đặt PIN VÀ đang bị khoá
+    localStorage.removeItem && !hasPin() && localStorage.removeItem(LOCK_KEY); // dọn trạng thái cũ
     if (hasPin() && isLocked()) { showPinOverlay("unlock"); }
-    else { pinOverlay.hidden = true; resetLockTimer(); }
+    else { pinOverlay.hidden = true; document.body.style.overflow = ""; resetLockTimer(); }
     updatePinBtn();
     await loadEntries();
     render();
