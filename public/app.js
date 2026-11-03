@@ -620,7 +620,7 @@
   ================================================================ */
   function hasPin() { return !!localStorage.getItem(PIN_KEY); }
   function isLocked() { return localStorage.getItem(LOCK_KEY)==="1"; }
-  function lock() { localStorage.setItem(LOCK_KEY,"1"); showPinOverlay("unlock"); }
+  function lock() { if (!hasPin()) return; localStorage.setItem(LOCK_KEY,"1"); showPinOverlay("unlock"); }
   function unlock() { localStorage.removeItem(LOCK_KEY); pinOverlay.hidden=true; document.body.style.overflow=""; resetLockTimer(); }
   function resetLockTimer() {
     clearTimeout(lockTimer);
@@ -797,9 +797,9 @@
   (async ()=>{
     showQuote();
     dateInput.value=todayISO();
-    // PIN check
-    if (hasPin()&&isLocked()) { showPinOverlay("unlock"); }
-    else { resetLockTimer(); }
+    // PIN check — chỉ hiện overlay khi đã đặt PIN VÀ đang bị khoá
+    if (hasPin() && isLocked()) { showPinOverlay("unlock"); }
+    else { pinOverlay.hidden = true; resetLockTimer(); }
     updatePinBtn();
     await loadEntries();
     render();
