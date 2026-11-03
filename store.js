@@ -53,8 +53,13 @@ async function initStore() {
         mood TEXT NOT NULL,
         title TEXT NOT NULL DEFAULT '',
         text TEXT NOT NULL,
+        tags JSONB NOT NULL DEFAULT '[]',
         created_at TIMESTAMPTZ NOT NULL DEFAULT now()
       );
+    `);
+    // Migrate: thêm cột tags nếu DB cũ chưa có
+    await pool.query(`
+      ALTER TABLE entries ADD COLUMN IF NOT EXISTS tags JSONB NOT NULL DEFAULT '[]';
     `);
     console.log("✅ Đã kết nối PostgreSQL (đồng bộ nhiều thiết bị).");
   } else {
@@ -67,7 +72,7 @@ async function initStore() {
 async function listEntries() {
   if (DATABASE_URL) {
     const { rows } = await pool.query(
-      "SELECT id, date, mood, title, text, created_at FROM entries ORDER BY date DESC, created_at DESC"
+      "SELECT id, date, mood, title, text, tags, created_at FROM entries ORDER BY date DESC, created_at DESC"
     );
     return rows.map((r) => ({
       id: r.id,
@@ -75,6 +80,7 @@ async function listEntries() {
       mood: r.mood,
       title: r.title || "",
       text: r.text,
+      tags: Array.isArray(r.tags) ? r.tags : [],
       createdAt: r.created_at instanceof Date ? r.created_at.toISOString() : r.created_at,
     }));
   }
@@ -86,21 +92,24 @@ async function listEntries() {
 async function upsertEntry(entry) {
   if (DATABASE_URL) {
     await pool.query(
-      `INSERT INTO entries (id, date, mood, title, text, created_at)
-       VALUES ($1, $2, $3, $4, $5, $6)
+      `INSERT INTO entries (id, date, mood, title, text, tags, created_at)
+       VALUES ($1, $2, $3, $4, $5, $6, $7)
        ON CONFLICT (id) DO UPDATE SET
          date = EXCLUDED.date,
          mood = EXCLUDED.mood,
          title = EXCLUDED.title,
-         text = EXCLUDED.text`,
-      [entry.id, entry.date, entry.mood, entry.title, entry.text, entry.createdAt]
+         text = EXCLUDED.text,
+         tags = EXCLUDED.tags`,
+      [entry.id, entry.date, entry.mood, entry.title, entry.text,
+       JSON.stringify(entry.tags || []), entry.createdAt]
     );
     return;
   }
   const arr = await fileReadAll();
   const i = arr.findIndex((e) => e.id === entry.id);
-  if (i >= 0) arr[i] = entry;
-  else arr.push(entry);
+  const record = { ...entry, tags: entry.tags || [] };
+  if (i >= 0) arr[i] = record;
+  else arr.push(record);
   await fileWriteAll(arr);
 }
 
