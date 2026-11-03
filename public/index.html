@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#e08aa0" />
+  <meta name="description" content="Nhật ký cảm xúc cá nhân — ghi niềm vui, trút bực dọc." />
+  <!-- PWA: cài lên màn hình chính điện thoại như app -->
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="icon.svg" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Cảm Xúc" />
+  <title>Trung Tâm Cảm Xúc — Nhật ký của tui</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- ===== Header ===== -->
+  <header class="site-header">
+    <div class="header-inner">
+      <h1 class="logo">🌸 Trung Tâm Cảm Xúc</h1>
+      <p class="tagline">Nơi tui ghi lại niềm vui, trút hết bực dọc — góc nhỏ của riêng tui.</p>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- ===== Khung viết entry mới ===== -->
+    <section class="composer" aria-label="Viết entry mới">
+      <h2 class="section-title">Hôm nay tui thấy sao?</h2>
+
+      <div class="mood-picker" role="radiogroup" aria-label="Chọn tâm trạng">
+        <button type="button" class="mood-chip mood-vui" data-mood="vui" role="radio" aria-checked="false">
+          <span class="mood-emoji">😊</span>
+          <span class="mood-label">Có chuyện vui</span>
+        </button>
+        <button type="button" class="mood-chip mood-buc" data-mood="buc" role="radio" aria-checked="false">
+          <span class="mood-emoji">😤</span>
+          <span class="mood-label">Bực mình</span>
+        </button>
+        <button type="button" class="mood-chip mood-bthuong" data-mood="bthuong" role="radio" aria-checked="false">
+          <span class="mood-emoji">😔</span>
+          <span class="mood-label">Buồn / hụt hẫng</span>
+        </button>
+        <button type="button" class="mood-chip mood-binhthuong" data-mood="binhthuong" role="radio" aria-checked="false">
+          <span class="mood-emoji">😌</span>
+          <span class="mood-label">Bình thường</span>
+        </button>
+      </div>
+
+      <label class="field-label" for="entry-date">Ngày</label>
+      <input type="date" id="entry-date" class="date-input" />
+
+      <label class="field-label" for="entry-title">Tiêu đề (tuỳ chọn)</label>
+      <input type="text" id="entry-title" class="title-input" placeholder="Đặt tên cho ngày này..." maxlength="120" />
+
+      <label class="field-label" for="entry-text">Viết hết ra đi, không ai đọc đâu</label>
+      <textarea id="entry-text" class="entry-text" rows="6" placeholder="Hôm nay có gì vui thì kể, có gì bực thì chửi cho đã... viết hết ra đây, nhẹ lòng liền."></textarea>
+
+      <div class="composer-actions">
+        <button type="button" id="save-entry" class="btn btn-primary">Lưu lại</button>
+        <button type="button" id="clear-entry" class="btn btn-ghost">Xoá viết</button>
+      </div>
+      <p id="composer-msg" class="composer-msg" role="status" aria-live="polite"></p>
+    </section>
+
+    <!-- ===== Thống kê nhỏ ===== -->
+    <section class="stats" aria-label="Tổng quan">
+      <div class="stat-card">
+        <span class="stat-num" id="stat-total">0</span>
+        <span class="stat-text">ngày đã ghi</span>
+      </div>
+      <div class="stat-card stat-vui">
+        <span class="stat-num" id="stat-vui">0</span>
+        <span class="stat-text">ngày vui 😊</span>
+      </div>
+      <div class="stat-card stat-buc">
+        <span class="stat-num" id="stat-buc">0</span>
+        <span class="stat-text">ngày bực 😤</span>
+      </div>
+    </section>
+
+    <!-- ===== Danh sách entry ===== -->
+    <section class="timeline" aria-label="Nhật ký">
+      <div class="timeline-head">
+        <h2 class="section-title">Nhật ký của tui</h2>
+        <div class="filters" role="group" aria-label="Lọc theo tâm trạng">
+          <button type="button" class="filter-btn is-active" data-filter="all">Tất cả</button>
+          <button type="button" class="filter-btn" data-filter="vui">😊 Vui</button>
+          <button type="button" class="filter-btn" data-filter="buc">😤 Bực</button>
+          <button type="button" class="filter-btn" data-filter="bthuong">😔 Buồn</button>
+          <button type="button" class="filter-btn" data-filter="binhthuong">😌 Thường</button>
+        </div>
+      </div>
+
+      <div id="entries-list" class="entries-list">
+        <!-- entries render here -->
+      </div>
+      <p id="empty-state" class="empty-state">Chưa có entry nào. Viết gì đó đi, bắt đầu từ hôm nay 🌱</p>
+    </section>
+
+    <!-- ===== Sao lưu dữ liệu ===== -->
+    <section class="backup" aria-label="Sao lưu dữ liệu">
+      <div class="backup-info">
+        <h2 class="section-title">Sao lưu nhật ký</h2>
+        <p class="backup-desc">Tải file về máy để giữ an toàn. Xoá lịch sử trình duyệt sẽ mất dữ liệu, nên thỉnh thoảng bấm "Tải về" một phát nhé. Muốn khôi phục thì bấm "Nhập lại" rồi chọn file đã lưu.</p>
+      </div>
+      <div class="backup-actions">
+        <button type="button" id="export-btn" class="btn btn-primary">⬇️ Tải về máy</button>
+        <button type="button" id="import-btn" class="btn btn-ghost">⬆️ Nhập lại</button>
+        <input type="file" id="import-file" accept="application/json,.json" hidden />
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>Dữ liệu lưu ngay trên máy bạn — chỉ bạn mới thấy. Mỗi ngày một dòng, nhẹ lòng hơn. 💛</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

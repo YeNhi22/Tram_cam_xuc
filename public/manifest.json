@@ -1,0 +1,20 @@
+{
+  "name": "Trung Tâm Cảm Xúc — Nhật ký của tui",
+  "short_name": "Cảm Xúc",
+  "description": "Nhật ký cảm xúc cá nhân — ghi niềm vui, trút bực dọc.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#fff6f0",
+  "theme_color": "#e08aa0",
+  "lang": "vi",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

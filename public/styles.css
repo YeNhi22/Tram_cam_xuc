@@ -1,0 +1,404 @@
+/* ===== Trung Tâm Cảm Xúc — styles ===== */
+:root {
+  --bg-1: #fff6f0;
+  --bg-2: #fef0f6;
+  --ink: #3a2b2f;
+  --ink-soft: #6b5a60;
+  --card: #ffffff;
+  --line: #f0e2e6;
+  --vui: #f6a96b;
+  --vui-soft: #fff3e6;
+  --buc: #e8707a;
+  --buc-soft: #fde8ea;
+  --bthuong: #7b8cc4;
+  --bthuong-soft: #eef1fb;
+  --binhthuong: #6fb39a;
+  --binhthuong-soft: #e8f6f0;
+  --primary: #e08aa0;
+  --primary-dark: #c56a82;
+  --shadow: 0 6px 24px rgba(120, 70, 90, 0.08);
+  --radius: 18px;
+}
+
+* { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  font-family: "Be Vietnam Pro", system-ui, sans-serif;
+  color: var(--ink);
+  background: linear-gradient(160deg, var(--bg-1), var(--bg-2));
+  min-height: 100vh;
+  line-height: 1.6;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ===== Header ===== */
+.site-header {
+  background: linear-gradient(135deg, rgba(255, 240, 230, 0.9), rgba(255, 230, 240, 0.9));
+  padding: 2.2rem 1rem 1.6rem;
+  text-align: center;
+  border-bottom: 1px solid var(--line);
+}
+.logo {
+  margin: 0;
+  font-size: 1.9rem;
+  font-weight: 700;
+  color: var(--primary-dark);
+  letter-spacing: 0.2px;
+}
+.tagline {
+  margin: 0.4rem 0 0;
+  color: var(--ink-soft);
+  font-size: 0.98rem;
+}
+
+/* ===== Layout ===== */
+.container {
+  max-width: 760px;
+  margin: 1.6rem auto 3rem;
+  padding: 0 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.6rem;
+}
+.section-title {
+  font-size: 1.15rem;
+  margin: 0 0 0.9rem;
+  color: var(--ink);
+}
+
+/* ===== Composer ===== */
+.composer {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 1.5rem 1.5rem 1.6rem;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--line);
+}
+
+/* Mood picker */
+.mood-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-bottom: 1.3rem;
+}
+.mood-chip {
+  flex: 1 1 130px;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.7rem 0.9rem;
+  border: 2px solid var(--line);
+  border-radius: 14px;
+  background: #fff;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.95rem;
+  color: var(--ink-soft);
+  transition: all 0.18s ease;
+}
+.mood-chip:hover { transform: translateY(-2px); }
+.mood-chip .mood-emoji { font-size: 1.4rem; line-height: 1; }
+.mood-chip.is-selected { color: var(--ink); font-weight: 600; }
+.mood-chip.mood-vui.is-selected { border-color: var(--vui); background: var(--vui-soft); }
+.mood-chip.mood-buc.is-selected { border-color: var(--buc); background: var(--buc-soft); }
+.mood-chip.mood-bthuong.is-selected { border-color: var(--bthuong); background: var(--bthuong-soft); }
+.mood-chip.mood-binhthuong.is-selected { border-color: var(--binhthuong); background: var(--binhthuong-soft); }
+
+/* Form fields */
+.field-label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+  margin: 0.9rem 0 0.35rem;
+}
+.date-input, .title-input {
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  border: 1.5px solid var(--line);
+  border-radius: 12px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  color: var(--ink);
+  background: #fffdfb;
+}
+.date-input:focus, .title-input:focus, .entry-text:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(224, 138, 160, 0.15);
+}
+.entry-text {
+  width: 100%;
+  margin-top: 0.35rem;
+  padding: 0.85rem 0.95rem;
+  border: 1.5px solid var(--line);
+  border-radius: 12px;
+  font-family: inherit;
+  font-size: 1rem;
+  color: var(--ink);
+  background: #fffdfb;
+  resize: vertical;
+  min-height: 140px;
+}
+
+/* Buttons */
+.composer-actions {
+  display: flex;
+  gap: 0.6rem;
+  margin-top: 1.1rem;
+}
+.btn {
+  border: none;
+  border-radius: 12px;
+  padding: 0.7rem 1.4rem;
+  font-family: inherit;
+  font-size: 0.97rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.16s ease;
+}
+.btn-primary {
+  background: var(--primary);
+  color: #fff;
+}
+.btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); }
+.btn-ghost {
+  background: transparent;
+  color: var(--ink-soft);
+  border: 1.5px solid var(--line);
+}
+.btn-ghost:hover { background: #faf3f5; }
+
+.composer-msg {
+  margin: 0.8rem 0 0;
+  font-size: 0.88rem;
+  color: var(--binhthuong);
+  min-height: 1.2em;
+}
+.composer-msg.is-error { color: var(--buc); }
+
+/* ===== Stats ===== */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.8rem;
+}
+.stat-card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 0.9rem 0.6rem;
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+.stat-num {
+  display: block;
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+.stat-card.stat-vui .stat-num { color: var(--vui); }
+.stat-card.stat-buc .stat-num { color: var(--buc); }
+.stat-text {
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+}
+
+/* ===== Timeline ===== */
+.timeline-head {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  margin-bottom: 0.5rem;
+}
+.timeline-head .section-title { margin-bottom: 0; }
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+.filter-btn {
+  border: 1.5px solid var(--line);
+  background: #fff;
+  color: var(--ink-soft);
+  padding: 0.4rem 0.85rem;
+  border-radius: 20px;
+  font-family: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.filter-btn:hover { border-color: var(--primary); color: var(--primary-dark); }
+.filter-btn.is-active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+}
+
+.entries-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+/* Entry card */
+.entry {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-left: 5px solid var(--line);
+  border-radius: 14px;
+  padding: 1rem 1.2rem;
+  box-shadow: var(--shadow);
+  animation: pop 0.25s ease;
+}
+.entry[data-mood="vui"] { border-left-color: var(--vui); background: linear-gradient(0deg, var(--vui-soft), #fff 70px); }
+.entry[data-mood="buc"] { border-left-color: var(--buc); background: linear-gradient(0deg, var(--buc-soft), #fff 70px); }
+.entry[data-mood="bthuong"] { border-left-color: var(--bthuong); background: linear-gradient(0deg, var(--bthuong-soft), #fff 70px); }
+.entry[data-mood="binhthuong"] { border-left-color: var(--binhthuong); background: linear-gradient(0deg, var(--binhthuong-soft), #fff 70px); }
+
+@keyframes pop {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.entry-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  margin-bottom: 0.35rem;
+}
+.entry-mood {
+  font-size: 1.3rem;
+}
+.entry-date {
+  font-size: 0.8rem;
+  color: var(--ink-soft);
+  font-weight: 600;
+}
+.entry-title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin: 0.1rem 0 0.4rem;
+  color: var(--ink);
+}
+.entry-body {
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: var(--ink);
+  font-size: 0.97rem;
+}
+.entry-foot {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 0.7rem;
+}
+.btn-delete {
+  background: transparent;
+  border: none;
+  color: var(--ink-soft);
+  font-size: 0.8rem;
+  cursor: pointer;
+  padding: 0.25rem 0.4rem;
+  opacity: 0.7;
+  transition: all 0.15s ease;
+}
+.btn-delete:hover { color: var(--buc); opacity: 1; }
+
+/* Empty state */
+.empty-state {
+  text-align: center;
+  color: var(--ink-soft);
+  padding: 1.5rem;
+  background: var(--card);
+  border: 1px dashed var(--line);
+  border-radius: 14px;
+  display: none;
+}
+.empty-state.is-show { display: block; }
+
+/* ===== Footer ===== */
+.site-footer {
+  text-align: center;
+  padding: 1.5rem 1rem 2rem;
+  color: var(--ink-soft);
+  font-size: 0.85rem;
+}
+
+/* ===== Backup ===== */
+.backup {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 1.2rem 1.4rem;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.backup-info { flex: 1 1 280px; }
+.backup-info .section-title { margin: 0 0 0.3rem; }
+.backup-desc {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+}
+.backup-actions {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+/* ===== Responsive ===== */
+/* Chống iOS tự zoom khi focus input (cần font >= 16px) */
+@media (max-width: 560px) {
+  .date-input, .title-input, .entry-text { font-size: 16px; }
+  .logo { font-size: 1.5rem; }
+  .site-header { padding: 1.6rem 1rem 1.2rem; }
+  .container { padding: 0 0.85rem; gap: 1.2rem; }
+
+  /* Mood chip: 2 mỗi dòng, nút to dễ bấm */
+  .mood-chip { flex: 1 1 calc(50% - 0.3rem); min-height: 56px; padding: 0.8rem 0.7rem; }
+  .mood-chip .mood-emoji { font-size: 1.6rem; }
+  .mood-chip .mood-label { font-size: 0.9rem; }
+
+  .composer { padding: 1.15rem 1rem 1.25rem; }
+
+  /* Nút bấm to hơn để bấm dễ */
+  .btn { padding: 0.85rem 1.2rem; min-height: 48px; }
+  .composer-actions .btn { flex: 1; }
+
+  .stats { grid-template-columns: 1fr; }
+  .stat-card { display: flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.7rem 0.9rem; }
+  .stat-num { font-size: 1.3rem; }
+
+  /* Bộ lọc dễ bấm hơn */
+  .filter-btn { padding: 0.55rem 0.9rem; font-size: 0.86rem; min-height: 40px; }
+
+  .entry { padding: 0.9rem 1rem; }
+  .btn-delete { padding: 0.4rem 0.6rem; font-size: 0.82rem; min-height: 36px; }
+
+  .backup { flex-direction: column; align-items: stretch; }
+  .backup-actions .btn { flex: 1; }
+}
+
+/* Điện thoại nhỏ hơn nữa */
+@media (max-width: 380px) {
+  .logo { font-size: 1.3rem; }
+  .tagline { font-size: 0.85rem; }
+  .stat-text { font-size: 0.74rem; }
+}
+
+/* Safe-area cho điện thoại có tai thỏ / home indicator */
+@supports (padding: max(env(safe-area-inset-bottom), 0px)) {
+  .site-header { padding-left: max(1rem, env(safe-area-inset-left)); padding-right: max(1rem, env(safe-area-inset-right)); }
+  .site-footer { padding-bottom: max(2rem, calc(env(safe-area-inset-bottom) + 1rem)); }
+  .composer-actions { padding-bottom: env(safe-area-inset-bottom); }
+}
