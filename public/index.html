@@ -46,6 +46,14 @@
     </div>
   </header>
 
+  <!-- Quote ngẫu nhiên mỗi ngày -->
+  <div id="daily-quote" class="daily-quote">
+    <span class="quote-mark">"</span><span id="quote-text"></span><span class="quote-mark">"</span>
+  </div>
+
+  <!-- Particles canvas nền -->
+  <canvas id="particles-canvas" aria-hidden="true"></canvas>
+
   <main class="container">
     <!-- ===== Khung viết entry mới ===== -->
     <section class="composer" aria-label="Viết entry mới">
@@ -85,6 +93,7 @@
 
       <label class="field-label" for="entry-text">Viết hết ra đi, không ai đọc đâu</label>
       <textarea id="entry-text" class="entry-text" rows="6" placeholder="Hôm nay có gì vui thì kể, có gì bực thì chửi cho đã... viết hết ra đây, nhẹ lòng liền."></textarea>
+      <p class="word-count" id="word-count" aria-live="polite"></p>
 
       <div class="composer-actions">
         <button type="button" id="save-entry" class="btn btn-primary">Lưu lại</button>
@@ -157,8 +166,78 @@
     </section>
   </main>
 
+    <!-- ===== Biểu đồ tâm trạng ===== -->
+    <section class="chart-section" aria-label="Biểu đồ tâm trạng">
+      <div class="chart-head">
+        <h2 class="section-title" style="margin:0">Biểu đồ cảm xúc</h2>
+        <div class="chart-tabs" role="group">
+          <button type="button" class="chart-tab is-active" data-range="week">7 ngày</button>
+          <button type="button" class="chart-tab" data-range="month">30 ngày</button>
+        </div>
+      </div>
+      <div id="chart-wrap" class="chart-wrap" aria-label="Biểu đồ cột tâm trạng"></div>
+      <div class="chart-legend">
+        <span class="legend-dot" style="background:var(--vui)"></span>Vui
+        <span class="legend-dot" style="background:var(--buc)"></span>Bực
+        <span class="legend-dot" style="background:var(--bthuong)"></span>Buồn
+        <span class="legend-dot" style="background:var(--binhthuong)"></span>Thường
+      </div>
+    </section>
+
+    <!-- ===== Ngày này năm ngoái ===== -->
+    <section id="on-this-day" class="on-this-day" hidden aria-label="Ngày này năm ngoái">
+      <div class="otd-header">
+        <span class="otd-icon">📅</span>
+        <h2 class="section-title" style="margin:0" id="otd-title">Ngày này năm ngoái</h2>
+      </div>
+      <div id="otd-list" class="otd-list"></div>
+    </section>
+
+    <!-- ===== Tóm tắt tháng ===== -->
+    <section id="monthly-summary" class="monthly-summary" aria-label="Tóm tắt tháng này">
+      <h2 class="section-title">Tháng này của tui</h2>
+      <div id="summary-content" class="summary-content"></div>
+    </section>
+  </main>
+
+  <!-- ===== PIN overlay ===== -->
+  <div id="pin-overlay" class="pin-overlay" role="dialog" aria-modal="true" aria-label="Nhập PIN để mở khóa" hidden>
+    <div class="pin-box">
+      <div class="pin-logo">🌸</div>
+      <h2 class="pin-title" id="pin-title">Nhập PIN</h2>
+      <p class="pin-sub" id="pin-sub">Nhật ký đang được bảo vệ</p>
+      <div class="pin-dots" id="pin-dots">
+        <span class="pin-dot"></span><span class="pin-dot"></span>
+        <span class="pin-dot"></span><span class="pin-dot"></span>
+      </div>
+      <div class="pin-pad">
+        <button class="pin-key" data-k="1">1</button><button class="pin-key" data-k="2">2</button><button class="pin-key" data-k="3">3</button>
+        <button class="pin-key" data-k="4">4</button><button class="pin-key" data-k="5">5</button><button class="pin-key" data-k="6">6</button>
+        <button class="pin-key" data-k="7">7</button><button class="pin-key" data-k="8">8</button><button class="pin-key" data-k="9">9</button>
+        <button class="pin-key pin-key-clear" data-k="clear">Xoá</button>
+        <button class="pin-key" data-k="0">0</button>
+        <button class="pin-key pin-key-del" data-k="del">⌫</button>
+      </div>
+      <p id="pin-error" class="pin-error" aria-live="polite"></p>
+      <button type="button" id="pin-setup-btn" class="btn btn-ghost" style="margin-top:.8rem;font-size:.8rem"></button>
+    </div>
+  </div>
+
+  <!-- Quote ngẫu nhiên (hiện phía dưới header) -->
+  <div id="daily-quote" class="daily-quote" hidden>
+    <span class="quote-mark">"</span>
+    <span id="quote-text"></span>
+    <span class="quote-mark">"</span>
+  </div>
+
+  <!-- Particles canvas nền -->
+  <canvas id="particles-canvas" aria-hidden="true"></canvas>
+
   <footer class="site-footer">
     <p>Dữ liệu đồng bộ lên cloud — máy tính &amp; điện thoại cùng một nhật ký. Mỗi ngày một dòng, nhẹ lòng hơn. 💛</p>
+    <div class="footer-actions">
+      <button type="button" id="pin-toggle-btn" class="btn btn-ghost btn-sm">🔒 Đặt PIN</button>
+    </div>
   </footer>
 
   <script src="app.js"></script>
