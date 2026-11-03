@@ -616,17 +616,12 @@
   }
 
   /* ================================================================
-     PIN / LOCK
+     PIN / LOCK — chỉ khoá khi người dùng tự bấm, KHÔNG tự khoá
   ================================================================ */
   function hasPin() { return !!localStorage.getItem(PIN_KEY); }
-  function isLocked() { return localStorage.getItem(LOCK_KEY)==="1"; }
-  function lock() { if (!hasPin()) return; localStorage.setItem(LOCK_KEY,"1"); showPinOverlay("unlock"); }
-  function unlock() { localStorage.removeItem(LOCK_KEY); pinOverlay.hidden=true; document.body.style.overflow=""; resetLockTimer(); }
-  function resetLockTimer() {
-    clearTimeout(lockTimer);
-    if (hasPin()) lockTimer=setTimeout(lock, LOCK_TIMEOUT);
-  }
-  ["click","keydown","touchstart"].forEach(ev=>document.addEventListener(ev,resetLockTimer,{passive:true}));
+  function lock() { if (!hasPin()) return; showPinOverlay("unlock"); }
+  function unlock() { pinOverlay.hidden=true; document.body.style.overflow=""; }
+  function resetLockTimer() { /* không tự khoá */ }
 
   function showPinOverlay(mode) {
     pinBuffer=""; isSettingPin=(mode==="set"); pinFirst="";
@@ -797,10 +792,11 @@
   (async ()=>{
     showQuote();
     dateInput.value=todayISO();
-    // PIN check — chỉ hiện overlay khi đã đặt PIN VÀ đang bị khoá
-    localStorage.removeItem && !hasPin() && localStorage.removeItem(LOCK_KEY); // dọn trạng thái cũ
-    if (hasPin() && isLocked()) { showPinOverlay("unlock"); }
-    else { pinOverlay.hidden = true; document.body.style.overflow = ""; resetLockTimer(); }
+    // PIN — xoá mọi trạng thái khoá cũ, không tự khoá khi load trang
+    localStorage.removeItem(LOCK_KEY);
+    pinOverlay.hidden = true;
+    document.body.style.overflow = "";
+    updatePinBtn();
     updatePinBtn();
     await loadEntries();
     render();
