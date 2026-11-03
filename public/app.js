@@ -26,10 +26,7 @@
   const WEEKDAYS_FULL = ["Chủ Nhật","Thứ Hai","Thứ Ba","Thứ Tư","Thứ Năm","Thứ Sáu","Thứ Bảy"];
   const MONTHS        = ["Tháng 1","Tháng 2","Tháng 3","Tháng 4","Tháng 5","Tháng 6",
                          "Tháng 7","Tháng 8","Tháng 9","Tháng 10","Tháng 11","Tháng 12"];
-  const DRAFT_KEY     = "camxuc_draft";
-  const PIN_KEY       = "camxuc_pin";
-  const LOCK_KEY      = "camxuc_locked";
-  const LOCK_TIMEOUT  = 5 * 60 * 1000; // 5 phút
+  const PIN_KEY       = "camxuc_pin_unused"; // không dùng nữa
 
   const QUOTES = [
     "Mỗi ngày là một trang mới — hãy viết điều gì đó đẹp.",
@@ -63,10 +60,6 @@
   let currentTags  = [];
   let calYear, calMonth;
   let chartRange   = "week";
-  let lockTimer    = null;
-  let pinBuffer    = "";
-  let isSettingPin = false;
-  let pinFirst     = "";
 
   /* ================================================================
      DOM REFS
@@ -109,13 +102,6 @@
   const otdList       = $("#otd-list");
   const otdTitle      = $("#otd-title");
   const summaryEl     = $("#summary-content");
-  const pinOverlay    = $("#pin-overlay");
-  const pinDots       = $("#pin-dots");
-  const pinTitle      = $("#pin-title");
-  const pinSub        = $("#pin-sub");
-  const pinError      = $("#pin-error");
-  const pinSetupBtn   = $("#pin-setup-btn");
-  const pinToggleBtn  = $("#pin-toggle-btn");
   const quoteText     = $("#quote-text");
 
   /* ================================================================
@@ -616,75 +602,16 @@
   }
 
   /* ================================================================
-     PIN / LOCK — chỉ khoá khi người dùng tự bấm, KHÔNG tự khoá
+     PIN — ĐÃ XOÁ, không còn tính năng này
   ================================================================ */
-  function hasPin() { return !!localStorage.getItem(PIN_KEY); }
-  function lock() { if (!hasPin()) return; showPinOverlay("unlock"); }
-  function unlock() { pinOverlay.hidden=true; document.body.style.overflow=""; }
-  function resetLockTimer() { /* không tự khoá */ }
+  function hasPin() { return false; }
+  function resetLockTimer() {}
 
-  function showPinOverlay(mode) {
-    pinBuffer=""; isSettingPin=(mode==="set"); pinFirst="";
-    pinOverlay.hidden=false; document.body.style.overflow="hidden";
-    updatePinDots();
-    if (mode==="set") {
-      pinTitle.textContent="Đặt PIN mới"; pinSub.textContent="Nhập 4 chữ số";
-      pinSetupBtn.textContent="Huỷ"; pinSetupBtn.onclick=()=>{ pinOverlay.hidden=true; document.body.style.overflow=""; };
-    } else {
-      pinTitle.textContent="Nhập PIN"; pinSub.textContent="Nhật ký đang được bảo vệ";
-      pinSetupBtn.textContent="Quên PIN? Xoá PIN"; pinSetupBtn.onclick=()=>{
-        if(confirm("Xoá PIN? App sẽ không còn bảo vệ bằng PIN nữa.")) {
-          localStorage.removeItem(PIN_KEY); unlock();
-        }
-      };
-    }
-    pinError.textContent="";
-  }
-  function updatePinDots() {
-    $$(".pin-dot").forEach((dot,i)=>dot.classList.toggle("filled", i<pinBuffer.length));
-  }
-  function handlePinKey(k) {
-    if (k==="clear") { pinBuffer=""; updatePinDots(); pinError.textContent=""; return; }
-    if (k==="del")   { pinBuffer=pinBuffer.slice(0,-1); updatePinDots(); return; }
-    if (pinBuffer.length>=4) return;
-    pinBuffer+=k; updatePinDots();
-    if (pinBuffer.length===4) setTimeout(()=>processPinEntry(), 120);
-  }
-  function processPinEntry() {
-    if (isSettingPin) {
-      if (!pinFirst) {
-        pinFirst=pinBuffer; pinBuffer=""; updatePinDots();
-        pinSub.textContent="Nhập lại để xác nhận"; pinError.textContent="";
-      } else {
-        if (pinBuffer===pinFirst) {
-          localStorage.setItem(PIN_KEY, pinBuffer);
-          pinOverlay.hidden=true; document.body.style.overflow="";
-          resetLockTimer(); showMsg("Đã đặt PIN thành công 🔒");
-        } else {
-          pinFirst=""; pinBuffer=""; updatePinDots();
-          pinError.textContent="PIN không khớp, thử lại nha.";
-          pinSub.textContent="Nhập 4 chữ số";
-        }
-      }
-    } else {
-      if (pinBuffer===localStorage.getItem(PIN_KEY)) { unlock(); }
-      else { pinBuffer=""; updatePinDots(); pinError.textContent="PIN sai rồi, thử lại nha 🙈"; }
-    }
-  }
-  $$(".pin-key").forEach(btn=>btn.addEventListener("click",()=>handlePinKey(btn.dataset.k)));
-  document.addEventListener("keydown", e=>{
-    if (pinOverlay.hidden) return;
-    if (e.key>="0"&&e.key<="9") handlePinKey(e.key);
-    else if (e.key==="Backspace")   handlePinKey("del");
-    else if (e.key==="Escape"&&isSettingPin) { pinOverlay.hidden=true; document.body.style.overflow=""; }
-  });
-  pinToggleBtn.addEventListener("click",()=>{
-    if (hasPin()) {
-      if (confirm("Xoá PIN bảo vệ?")) { localStorage.removeItem(PIN_KEY); clearTimeout(lockTimer); showMsg("Đã xoá PIN."); pinToggleBtn.textContent="🔒 Đặt PIN"; }
-    } else { showPinOverlay("set"); }
-  });
-  // Cập nhật label nút PIN
-  function updatePinBtn() { pinToggleBtn.textContent = hasPin() ? "🔓 Xoá PIN" : "🔒 Đặt PIN"; }
+  function showPinOverlay() {}
+  function updatePinDots() {}
+  function handlePinKey() {}
+  function processPinEntry() {}
+  function updatePinBtn() {}
 
   /* ================================================================
      RENDER TIMELINE + STATS
@@ -792,12 +719,9 @@
   (async ()=>{
     showQuote();
     dateInput.value=todayISO();
-    // PIN — xoá mọi trạng thái khoá cũ, không tự khoá khi load trang
-    localStorage.removeItem(LOCK_KEY);
-    pinOverlay.hidden = true;
-    document.body.style.overflow = "";
-    updatePinBtn();
-    updatePinBtn();
+    // Xoá mọi trạng thái PIN cũ còn sót
+    localStorage.removeItem("camxuc_pin");
+    localStorage.removeItem("camxuc_locked");
     await loadEntries();
     render();
     initCalendar();

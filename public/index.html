@@ -19,86 +19,63 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <!-- Confetti canvas (nền, không chặn click) -->
+  <!-- Confetti + Particles canvas -->
   <canvas id="confetti-canvas" aria-hidden="true"></canvas>
+  <canvas id="particles-canvas" aria-hidden="true"></canvas>
 
   <!-- ===== Header ===== -->
   <header class="site-header">
     <div class="header-inner">
       <h1 class="logo">🌸 Trung Tâm Cảm Xúc</h1>
       <p class="tagline">Nơi tui ghi lại niềm vui, trút hết bực dọc — góc nhỏ của riêng tui.</p>
-      <!-- Streak -->
-      <div id="streak-badge" class="streak-badge" title="Chuỗi ngày ghi nhật ký liên tiếp" hidden>
+      <div id="streak-badge" class="streak-badge" hidden>
         <span class="streak-fire">🔥</span>
         <span id="streak-count">0</span>
         <span class="streak-label">ngày liên tiếp</span>
       </div>
     </div>
-    <!-- Toolbar: dark mode + theme -->
     <div class="header-toolbar">
-      <button type="button" id="dark-toggle" class="icon-btn" title="Chuyển dark/light mode" aria-label="Chuyển dark/light mode">🌙</button>
+      <button type="button" id="dark-toggle" class="icon-btn" title="Dark/Light mode" aria-label="Chuyển dark/light mode">🌙</button>
       <div class="theme-picker" role="group" aria-label="Chọn màu giao diện">
-        <button type="button" class="theme-dot is-active" data-theme="hong"  title="Hồng" style="background:#e08aa0"></button>
-        <button type="button" class="theme-dot" data-theme="tim"   title="Tím" style="background:#9b7fc8"></button>
-        <button type="button" class="theme-dot" data-theme="mint"  title="Xanh mint" style="background:#4db899"></button>
-        <button type="button" class="theme-dot" data-theme="vang"  title="Vàng kem" style="background:#e0a94a"></button>
+        <button type="button" class="theme-dot is-active" data-theme="hong" title="Hồng" style="background:#e08aa0"></button>
+        <button type="button" class="theme-dot" data-theme="tim"  title="Tím"       style="background:#9b7fc8"></button>
+        <button type="button" class="theme-dot" data-theme="mint" title="Xanh mint" style="background:#4db899"></button>
+        <button type="button" class="theme-dot" data-theme="vang" title="Vàng kem"  style="background:#e0a94a"></button>
       </div>
     </div>
   </header>
 
   <!-- Quote ngẫu nhiên mỗi ngày -->
-  <div id="daily-quote" class="daily-quote">
+  <div class="daily-quote">
     <span class="quote-mark">"</span><span id="quote-text"></span><span class="quote-mark">"</span>
   </div>
 
-  <!-- Particles canvas nền -->
-  <canvas id="particles-canvas" aria-hidden="true"></canvas>
-
   <main class="container">
-    <!-- ===== Khung viết entry mới ===== -->
+
+    <!-- ===== Composer ===== -->
     <section class="composer" aria-label="Viết entry mới">
       <h2 class="section-title" id="composer-title">Hôm nay tui thấy sao?</h2>
-
       <div class="mood-picker" role="radiogroup" aria-label="Chọn tâm trạng">
-        <button type="button" class="mood-chip mood-vui" data-mood="vui" role="radio" aria-checked="false">
-          <span class="mood-emoji">😊</span>
-          <span class="mood-label">Có chuyện vui</span>
-        </button>
-        <button type="button" class="mood-chip mood-buc" data-mood="buc" role="radio" aria-checked="false">
-          <span class="mood-emoji">😤</span>
-          <span class="mood-label">Bực mình</span>
-        </button>
-        <button type="button" class="mood-chip mood-bthuong" data-mood="bthuong" role="radio" aria-checked="false">
-          <span class="mood-emoji">😔</span>
-          <span class="mood-label">Buồn / hụt hẫng</span>
-        </button>
-        <button type="button" class="mood-chip mood-binhthuong" data-mood="binhthuong" role="radio" aria-checked="false">
-          <span class="mood-emoji">😌</span>
-          <span class="mood-label">Bình thường</span>
-        </button>
+        <button type="button" class="mood-chip mood-vui"        data-mood="vui"        role="radio" aria-checked="false"><span class="mood-emoji">😊</span><span class="mood-label">Có chuyện vui</span></button>
+        <button type="button" class="mood-chip mood-buc"        data-mood="buc"        role="radio" aria-checked="false"><span class="mood-emoji">😤</span><span class="mood-label">Bực mình</span></button>
+        <button type="button" class="mood-chip mood-bthuong"    data-mood="bthuong"    role="radio" aria-checked="false"><span class="mood-emoji">😔</span><span class="mood-label">Buồn / hụt hẫng</span></button>
+        <button type="button" class="mood-chip mood-binhthuong" data-mood="binhthuong" role="radio" aria-checked="false"><span class="mood-emoji">😌</span><span class="mood-label">Bình thường</span></button>
       </div>
-
       <label class="field-label" for="entry-date">Ngày</label>
       <input type="date" id="entry-date" class="date-input" />
-
       <label class="field-label" for="entry-title">Tiêu đề (tuỳ chọn)</label>
       <input type="text" id="entry-title" class="title-input" placeholder="Đặt tên cho ngày này..." maxlength="120" />
-
-      <!-- Tags -->
       <label class="field-label">Nhãn (tuỳ chọn — gõ rồi Enter)</label>
       <div class="tag-input-wrap">
-        <div id="tag-list" class="tag-list" aria-label="Nhãn đã chọn"></div>
+        <div id="tag-list" class="tag-list"></div>
         <input type="text" id="tag-input" class="tag-input" placeholder="#gia-dinh, #cong-viec..." maxlength="30" autocomplete="off" />
       </div>
-
       <label class="field-label" for="entry-text">Viết hết ra đi, không ai đọc đâu</label>
-      <textarea id="entry-text" class="entry-text" rows="6" placeholder="Hôm nay có gì vui thì kể, có gì bực thì chửi cho đã... viết hết ra đây, nhẹ lòng liền."></textarea>
+      <textarea id="entry-text" class="entry-text" rows="6" placeholder="Hôm nay có gì vui thì kể, có gì bực thì chửi cho đã..."></textarea>
       <p class="word-count" id="word-count" aria-live="polite"></p>
-
       <div class="composer-actions">
-        <button type="button" id="save-entry" class="btn btn-primary">Lưu lại</button>
+        <button type="button" id="save-entry"  class="btn btn-primary">Lưu lại</button>
         <button type="button" id="clear-entry" class="btn btn-ghost">Xoá viết</button>
-        <!-- Nút huỷ sửa, ẩn khi không edit -->
         <button type="button" id="cancel-edit" class="btn btn-ghost" hidden>Huỷ sửa</button>
       </div>
       <p id="composer-msg" class="composer-msg" role="status" aria-live="polite"></p>
@@ -127,46 +104,10 @@
         <h2 class="section-title" id="cal-title" style="margin:0"></h2>
         <button type="button" id="cal-next" class="icon-btn" aria-label="Tháng sau">›</button>
       </div>
-      <div id="cal-grid" class="cal-grid" role="grid" aria-label="Lịch tháng"></div>
+      <div id="cal-grid" class="cal-grid" role="grid"></div>
     </section>
 
-    <!-- ===== Danh sách entry ===== -->
-    <section class="timeline" aria-label="Nhật ký">
-      <div class="timeline-head">
-        <h2 class="section-title">Nhật ký của tui</h2>
-        <!-- Tìm kiếm -->
-        <div class="search-wrap">
-          <span class="search-icon" aria-hidden="true">🔍</span>
-          <input type="search" id="search-input" class="search-input" placeholder="Tìm theo từ khoá, nhãn..." aria-label="Tìm kiếm nhật ký" />
-        </div>
-        <div class="filters" role="group" aria-label="Lọc theo tâm trạng">
-          <button type="button" class="filter-btn is-active" data-filter="all">Tất cả</button>
-          <button type="button" class="filter-btn" data-filter="vui">😊 Vui</button>
-          <button type="button" class="filter-btn" data-filter="buc">😤 Bực</button>
-          <button type="button" class="filter-btn" data-filter="bthuong">😔 Buồn</button>
-          <button type="button" class="filter-btn" data-filter="binhthuong">😌 Thường</button>
-        </div>
-      </div>
-
-      <div id="entries-list" class="entries-list"></div>
-      <p id="empty-state" class="empty-state">Chưa có entry nào. Viết gì đó đi, bắt đầu từ hôm nay 🌱</p>
-    </section>
-
-    <!-- ===== Sao lưu ===== -->
-    <section class="backup" aria-label="Sao lưu dữ liệu">
-      <div class="backup-info">
-        <h2 class="section-title">Sao lưu nhật ký</h2>
-        <p class="backup-desc">Tải file về máy để giữ an toàn. Muốn khôi phục thì bấm "Nhập lại" rồi chọn file đã lưu.</p>
-      </div>
-      <div class="backup-actions">
-        <button type="button" id="export-btn" class="btn btn-primary">⬇️ Tải về máy</button>
-        <button type="button" id="import-btn" class="btn btn-ghost">⬆️ Nhập lại</button>
-        <input type="file" id="import-file" accept="application/json,.json" hidden />
-      </div>
-    </section>
-  </main>
-
-    <!-- ===== Biểu đồ tâm trạng ===== -->
+    <!-- ===== Biểu đồ ===== -->
     <section class="chart-section" aria-label="Biểu đồ tâm trạng">
       <div class="chart-head">
         <h2 class="section-title" style="margin:0">Biểu đồ cảm xúc</h2>
@@ -175,7 +116,7 @@
           <button type="button" class="chart-tab" data-range="month">30 ngày</button>
         </div>
       </div>
-      <div id="chart-wrap" class="chart-wrap" aria-label="Biểu đồ cột tâm trạng"></div>
+      <div id="chart-wrap" class="chart-wrap"></div>
       <div class="chart-legend">
         <span class="legend-dot" style="background:var(--vui)"></span>Vui
         <span class="legend-dot" style="background:var(--buc)"></span>Bực
@@ -194,50 +135,48 @@
     </section>
 
     <!-- ===== Tóm tắt tháng ===== -->
-    <section id="monthly-summary" class="monthly-summary" aria-label="Tóm tắt tháng này">
+    <section class="monthly-summary" aria-label="Tóm tắt tháng này">
       <h2 class="section-title">Tháng này của tui</h2>
       <div id="summary-content" class="summary-content"></div>
     </section>
+
+    <!-- ===== Nhật ký ===== -->
+    <section class="timeline" aria-label="Nhật ký">
+      <div class="timeline-head">
+        <h2 class="section-title">Nhật ký của tui</h2>
+        <div class="search-wrap">
+          <span class="search-icon" aria-hidden="true">🔍</span>
+          <input type="search" id="search-input" class="search-input" placeholder="Tìm theo từ khoá, nhãn..." aria-label="Tìm kiếm" />
+        </div>
+        <div class="filters" role="group" aria-label="Lọc theo tâm trạng">
+          <button type="button" class="filter-btn is-active" data-filter="all">Tất cả</button>
+          <button type="button" class="filter-btn" data-filter="vui">😊 Vui</button>
+          <button type="button" class="filter-btn" data-filter="buc">😤 Bực</button>
+          <button type="button" class="filter-btn" data-filter="bthuong">😔 Buồn</button>
+          <button type="button" class="filter-btn" data-filter="binhthuong">😌 Thường</button>
+        </div>
+      </div>
+      <div id="entries-list" class="entries-list"></div>
+      <p id="empty-state" class="empty-state">Chưa có entry nào. Viết gì đó đi, bắt đầu từ hôm nay 🌱</p>
+    </section>
+
+    <!-- ===== Sao lưu ===== -->
+    <section class="backup" aria-label="Sao lưu dữ liệu">
+      <div class="backup-info">
+        <h2 class="section-title">Sao lưu nhật ký</h2>
+        <p class="backup-desc">Tải file về máy để giữ an toàn. Muốn khôi phục thì bấm "Nhập lại".</p>
+      </div>
+      <div class="backup-actions">
+        <button type="button" id="export-btn" class="btn btn-primary">⬇️ Tải về máy</button>
+        <button type="button" id="import-btn" class="btn btn-ghost">⬆️ Nhập lại</button>
+        <input type="file" id="import-file" accept="application/json,.json" hidden />
+      </div>
+    </section>
+
   </main>
-
-  <!-- ===== PIN overlay ===== -->
-  <div id="pin-overlay" class="pin-overlay" role="dialog" aria-modal="true" aria-label="Nhập PIN để mở khóa" hidden>
-    <div class="pin-box">
-      <div class="pin-logo">🌸</div>
-      <h2 class="pin-title" id="pin-title">Nhập PIN</h2>
-      <p class="pin-sub" id="pin-sub">Nhật ký đang được bảo vệ</p>
-      <div class="pin-dots" id="pin-dots">
-        <span class="pin-dot"></span><span class="pin-dot"></span>
-        <span class="pin-dot"></span><span class="pin-dot"></span>
-      </div>
-      <div class="pin-pad">
-        <button class="pin-key" data-k="1">1</button><button class="pin-key" data-k="2">2</button><button class="pin-key" data-k="3">3</button>
-        <button class="pin-key" data-k="4">4</button><button class="pin-key" data-k="5">5</button><button class="pin-key" data-k="6">6</button>
-        <button class="pin-key" data-k="7">7</button><button class="pin-key" data-k="8">8</button><button class="pin-key" data-k="9">9</button>
-        <button class="pin-key pin-key-clear" data-k="clear">Xoá</button>
-        <button class="pin-key" data-k="0">0</button>
-        <button class="pin-key pin-key-del" data-k="del">⌫</button>
-      </div>
-      <p id="pin-error" class="pin-error" aria-live="polite"></p>
-      <button type="button" id="pin-setup-btn" class="btn btn-ghost" style="margin-top:.8rem;font-size:.8rem"></button>
-    </div>
-  </div>
-
-  <!-- Quote ngẫu nhiên (hiện phía dưới header) -->
-  <div id="daily-quote" class="daily-quote" hidden>
-    <span class="quote-mark">"</span>
-    <span id="quote-text"></span>
-    <span class="quote-mark">"</span>
-  </div>
-
-  <!-- Particles canvas nền -->
-  <canvas id="particles-canvas" aria-hidden="true"></canvas>
 
   <footer class="site-footer">
     <p>Dữ liệu đồng bộ lên cloud — máy tính &amp; điện thoại cùng một nhật ký. Mỗi ngày một dòng, nhẹ lòng hơn. 💛</p>
-    <div class="footer-actions">
-      <button type="button" id="pin-toggle-btn" class="btn btn-ghost btn-sm">🔒 Đặt PIN</button>
-    </div>
   </footer>
 
   <script src="app.js"></script>

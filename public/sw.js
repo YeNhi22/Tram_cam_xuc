@@ -4,7 +4,7 @@
    - Trang + file tĩnh: lưu tạm, mở lại nhanh ngay cả khi mạng chậm
    Khi cập nhật code, đổi VERSION bên dưới để xoá cache cũ.
    ============================================================ */
-const VERSION = "v6";
+const VERSION = "v7";
 const CACHE = "camxuc-shell-" + VERSION;
 const SHELL = ["./", "./index.html", "./styles.css", "./app.js", "./manifest.json", "./icon.svg"];
 
