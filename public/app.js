@@ -817,9 +817,11 @@
   function openLightbox(src) {
     imgModalSrc.src = src;
     imgModal.hidden = false;
+    imgModal.style.display = "flex";
   }
   function closeLightbox() {
     imgModal.hidden = true;
+    imgModal.style.display = "none";
     imgModalSrc.src = "";
   }
   if (imgModalClose) imgModalClose.addEventListener("click", closeLightbox);
