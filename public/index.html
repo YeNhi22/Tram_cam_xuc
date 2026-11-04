@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#e08aa0" />
-  <meta name="description" content="Nhật ký cảm xúc cá nhân — ghi niềm vui, trút bực dọc." />
+  <meta name="description" content="Nhật ký cảm xúc cá nhân — ghi niềm vui, trút bực dọc, kết nối bạn bè." />
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" href="icon.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="icon.svg" />
@@ -40,6 +40,12 @@
         <button type="button" class="theme-dot" data-theme="mint" style="background:#4db899"></button>
         <button type="button" class="theme-dot" data-theme="vang" style="background:#e0a94a"></button>
       </div>
+      <div id="user-area" class="user-area" hidden>
+        <button type="button" id="notif-btn" class="icon-btn notif-btn" aria-label="Thông báo">🔔<span id="notif-badge" class="notif-badge" hidden>0</span></button>
+        <div id="notif-panel" class="notif-panel" hidden></div>
+        <span id="user-name" class="user-name"></span>
+        <button type="button" id="logout-btn" class="btn btn-ghost btn-sm">Đăng xuất</button>
+      </div>
     </div>
   </header>
 
@@ -56,6 +62,14 @@
     <button type="button" class="tab-btn" data-tab="diary" role="tab" aria-selected="false" aria-controls="tab-diary">
       <span class="tab-icon">📖</span><span class="tab-label">Nhật ký</span>
       <span class="tab-badge" id="tab-badge-diary" hidden></span>
+    </button>
+    <button type="button" class="tab-btn" data-tab="feed" role="tab" aria-selected="false" aria-controls="tab-feed">
+      <span class="tab-icon">📰</span><span class="tab-label">Bảng tin</span>
+      <span class="tab-badge" id="tab-badge-feed" hidden></span>
+    </button>
+    <button type="button" class="tab-btn" data-tab="chat" role="tab" aria-selected="false" aria-controls="tab-chat">
+      <span class="tab-icon">💬</span><span class="tab-label">Trò chuyện</span>
+      <span class="tab-badge" id="tab-badge-chat" hidden></span>
     </button>
     <button type="button" class="tab-btn" data-tab="stats" role="tab" aria-selected="false" aria-controls="tab-stats">
       <span class="tab-icon">📊</span><span class="tab-label">Thống kê</span>
@@ -78,7 +92,7 @@
         <input type="date" id="entry-date" class="date-input" />
         <label class="field-label" for="entry-title">Tiêu đề (tuỳ chọn)</label>
         <input type="text" id="entry-title" class="title-input" placeholder="Đặt tên cho ngày này..." maxlength="120" />
-        <label class="field-label">Nhãn (gõ rồi Enter)</label>
+        <label class="field-label">Nhãn (gõ rồi enter)</label>
         <div class="tag-input-wrap">
           <div id="tag-list" class="tag-list"></div>
           <input type="text" id="tag-input" class="tag-input" placeholder="#gia-dinh, #cong-viec..." maxlength="30" autocomplete="off" />
@@ -86,6 +100,23 @@
         <label class="field-label" for="entry-text">Viết hết ra đi, không ai đọc đâu</label>
         <textarea id="entry-text" class="entry-text" rows="7" placeholder="Hôm nay có gì vui thì kể, có gì bực thì chửi cho đã... viết hết ra đây, nhẹ lòng liền."></textarea>
         <p class="word-count" id="word-count" aria-live="polite"></p>
+
+        <!-- Chia sẻ với -->
+        <label class="field-label" for="share-input">Chia sẻ với (tuỳ chọn — để trống là riêng tư, chỉ mình bạn xem)</label>
+        <div class="share-wrap">
+          <div id="share-list" class="share-list"></div>
+          <input type="text" id="share-input" class="share-input" placeholder="Gõ tên hiển thị hoặc tên đăng nhập..." autocomplete="off" />
+          <div id="share-results" class="share-results" hidden></div>
+        </div>
+
+        <!-- Đính kèm ảnh / video -->
+        <label class="field-label">Đính kèm ảnh / video (tối đa 6, mỗi file ≤ 20MB)</label>
+        <div class="attach-row">
+          <button type="button" id="attach-btn" class="btn btn-ghost">📎 Tải ảnh / video</button>
+          <input type="file" id="attach-file" accept="image/*,video/*" multiple hidden />
+        </div>
+        <div id="attach-preview" class="attach-preview"></div>
+
         <div class="composer-actions">
           <button type="button" id="save-entry"  class="btn btn-primary">Lưu lại</button>
           <button type="button" id="clear-entry" class="btn btn-ghost">Xoá viết</button>
@@ -163,6 +194,46 @@
     </div>
   </div>
 
+  <!-- ===== TAB: BẢNG TIN ===== -->
+  <div id="tab-feed" class="tab-panel" role="tabpanel" hidden>
+    <div class="container">
+      <section class="timeline" aria-label="Bảng tin">
+        <div class="timeline-head">
+          <h2 class="section-title">Bảng tin</h2>
+          <p class="feed-desc">Những entry mà người khác đã chia sẻ với bạn. Bấm "Nhắn tin" để trò chuyện riêng.</p>
+        </div>
+        <div id="feed-list" class="entries-list"></div>
+        <p id="feed-empty" class="empty-state is-show">Chưa có ai chia sẻ gì với bạn 🌱</p>
+      </section>
+    </div>
+  </div>
+
+  <!-- ===== TAB: TRÒ CHUYỆN ===== -->
+  <div id="tab-chat" class="tab-panel" role="tabpanel" hidden>
+    <div class="container chat-wrap">
+      <aside class="chat-sidebar">
+        <h2 class="section-title">Trò chuyện</h2>
+        <p class="chat-hint">Giữ chuỗi 🔥 bằng cách nhắn cho nhau. Qua 24h không ai nhắn, chuỗi sẽ đứt — mỗi tháng được khôi phục 5 lần.</p>
+        <div class="chat-search-wrap">
+          <input type="text" id="chat-user-search" class="chat-search-input" placeholder="🔍 Tìm bạn để nhắn tin..." autocomplete="off" />
+          <div id="chat-user-results" class="chat-search-results" hidden></div>
+        </div>
+        <div id="conv-list" class="conv-list"></div>
+        <p id="conv-empty" class="empty-state is-show">Chưa có cuộc trò chuyện. Hãy tìm bạn ở trên hoặc vào Bảng tin và bấm "Nhắn tin".</p>
+      </aside>
+      <section class="chat-main">
+        <div id="chat-header" class="chat-header"></div>
+        <div id="chat-streak" class="chat-streak" hidden></div>
+        <div id="chat-msgs" class="chat-msgs"></div>
+        <div id="chat-placeholder" class="chat-placeholder">Chọn một cuộc trò chuyện bên trái để bắt đầu 💬</div>
+        <div class="chat-input-row">
+          <input type="text" id="chat-input" class="chat-input" placeholder="Nhắn gì đó..." disabled />
+          <button type="button" id="chat-send" class="btn btn-primary" disabled>Gửi</button>
+        </div>
+      </section>
+    </div>
+  </div>
+
   <!-- ===== TAB: THỐNG KÊ ===== -->
   <div id="tab-stats" class="tab-panel" role="tabpanel" hidden>
     <div class="container">
@@ -206,6 +277,34 @@
   <footer class="site-footer">
     <p>Mỗi ngày một dòng, nhẹ lòng hơn 💛</p>
   </footer>
+
+  <!-- ===== Màn hình đăng nhập / đăng ký ===== -->
+  <div id="auth-screen" class="auth-screen">
+    <div class="auth-card">
+      <div class="auth-logo">🌸 Trung Tâm Cảm Xúc</div>
+      <p class="auth-sub">Đăng ký hoặc đăng nhập để ghi lại cảm xúc, chia sẻ với bạn bè và giữ chuỗi cùng nhau.</p>
+      <div class="auth-tabs">
+        <button type="button" class="auth-tab is-active" data-amode="login">Đăng nhập</button>
+        <button type="button" class="auth-tab" data-amode="register">Đăng ký</button>
+      </div>
+      <form id="auth-form" class="auth-form" autocomplete="on">
+        <input type="text" id="auth-username" class="auth-input" placeholder="Tên đăng nhập" autocomplete="username" required />
+        <input type="text" id="auth-display" class="auth-input" placeholder="Tên hiển thị (bỏ trống = tên đăng nhập)" autocomplete="off" hidden />
+        <input type="password" id="auth-password" class="auth-input" placeholder="Mật khẩu" autocomplete="current-password" required />
+        <button type="submit" id="auth-submit" class="btn btn-primary auth-submit">Đăng nhập</button>
+      </form>
+      <p id="auth-msg" class="auth-msg" role="status" aria-live="polite"></p>
+    </div>
+  </div>
+
+  <!-- Modal phóng to ảnh -->
+  <div id="img-modal" class="img-modal" hidden>
+    <div class="img-modal-backdrop"></div>
+    <div class="img-modal-box">
+      <img id="img-modal-src" src="" alt="Ảnh phóng to" />
+      <button type="button" id="img-modal-close" class="img-modal-close" aria-label="Đóng">✕</button>
+    </div>
+  </div>
 
   <script src="app.js"></script>
 </body>

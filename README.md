@@ -1,84 +1,77 @@
 # 🌸 Trung Tâm Cảm Xúc
 
-Nhật ký cảm xúc cá nhân — ghi niềm vui, trút bực dọc. Hỗ trợ **đồng bộ qua nhiều thiết bị** (máy tính + điện thoại) nhờ backend + database online.
+Nhật ký cảm xúc cá nhân — ghi niềm vui, trút bực dọc, kết nối bạn bè. Hỗ trợ **đồng bộ qua nhiều thiết bị** (máy tính + điện thoại) nhờ backend Node.js + database PostgreSQL (Neon) hoặc file JSON cục bộ.
 
-## Cấu trúc
+---
 
-- `server.js` — API `/api/entries` + phục vụ giao diện
-- `store.js` — lớp lưu trữ (PostgreSQL nếu có `DATABASE_URL`, không thì file JSON cục bộ)
-- `public/` — giao diện (HTML / CSS / JS)
+## 🌟 Các tính năng chính
 
-## 1) Chạy thử trên máy (nhanh)
+1. **Đăng ký & Đăng nhập**:
+   - Quản lý tài khoản cá nhân an toàn (mật khẩu mã hoá `scrypt` kèm salt ngẫu nhiên).
+   - Tự động ghi nhớ phiên đăng nhập qua token.
 
-Cần Node.js ≥ 18 (tải tại https://nodejs.org).
+2. **Ghi nhật ký & Chia sẻ có chọn lọc**:
+   - Chọn tâm trạng (Vui 😊, Bực 😤, Buồn 😔, Bình thường 😌).
+   - Đính kèm thẻ tag (`#gia-dinh`, `#cong-viec`,...).
+   - **Tùy chọn chia sẻ**: Tìm và chọn người muốn chia sẻ bằng tên hoặc `@username`. Nếu để trống, bài viết là **hoàn toàn riêng tư**, chỉ mình bạn xem được.
 
+3. **Bảng tin (Feed)**:
+   - Nơi xem những bài viết mà bạn bè hoặc người khác đã chia sẻ cho bạn.
+   - Nút **"💬 Nhắn tin"** cạnh bài viết để ngay lập tức mở cuộc trò chuyện riêng với tác giả.
+
+4. **Tải ảnh & Video lên**:
+   - Cho phép tải lên tối đa 6 tệp đa phương tiện (ảnh hoặc video, dung lượng mỗi tệp lên đến 20MB).
+   - Xem video trực tiếp với trình phát video tích hợp.
+   - Bấm vào ảnh để phóng to toàn màn hình (lightbox xem ảnh).
+
+5. **Thông báo**:
+   - Chuông thông báo 🔔 trên thanh điều hướng với huy hiệu đếm thông báo chưa đọc.
+   - Nhận thông báo tức thì khi ai đó chia sẻ entry với bạn hoặc gửi tin nhắn cho bạn.
+   - Bấm vào thông báo sẽ tự động chuyển đến bài viết hoặc cuộc trò chuyện tương ứng.
+
+6. **Trò chuyện 2 người & Giữ chuỗi liên tiếp (Streak 🔥)**:
+   - Trò chuyện riêng tư giữa 2 người dùng.
+   - Nhắn tin cho nhau mỗi ngày để thắp sáng và tích lũy chuỗi ngày liên tiếp (`🔥 X ngày`).
+   - Tìm kiếm người dùng trực tiếp trong giao diện trò chuyện để bắt đầu cuộc trò chuyện mới.
+
+7. **Khôi phục chuỗi (5 lần / tháng)**:
+   - Nếu quá 24 giờ không ai nhắn tin, chuỗi sẽ bị đánh dấu đứt (`💔`).
+   - Mỗi người dùng được cấp **5 lượt khôi phục chuỗi mỗi tháng**.
+   - Bấm nút **"🔄 Khôi phục chuỗi"** để hồi sinh lại số ngày chuỗi đã đạt được!
+
+8. **Thống kê & Tiện ích khác**:
+   - Biểu đồ cảm xúc 7 ngày & 30 ngày.
+   - "Ngày này năm ngoái" (On this day) để ôn lại kỷ niệm.
+   - Tóm tắt cảm xúc tháng này.
+   - Chế độ Sáng / Tối (Dark mode) & 4 giao diện màu pastel dễ thương (Hồng, Tím, Mint, Vàng).
+   - Hiệu ứng pháo hoa giấy (confetti), cánh hoa rơi (particles) và âm thanh vui tai.
+   - Hỗ trợ PWA: Cài đặt lên màn hình chính điện thoại như ứng dụng native.
+
+---
+
+## 🚀 Hướng dẫn khởi chạy
+
+### Cách 1: Chạy trực tiếp trên Windows (dùng sẵn Node tích hợp)
+Chạy file script `node.bat`:
+```powershell
+.\node.bat server.js
+```
+
+### Cách 2: Chạy bằng lệnh chuẩn Node.js
 ```bash
 npm install
 npm start
 ```
+Mở trình duyệt truy cập: **http://localhost:3000**
 
-Mở **http://localhost:3000** (mở qua trình duyệt, đừng mở file `index.html` trực tiếp).
-Ở chế độ này dữ liệu lưu vào `data/entries.json` — chỉ trên máy này, chưa đồng bộ.
+---
 
-> Mẹo: muốn xem trên điện thoại ngay tại nhà (cùng WiFi), mở `http://<IP-máy-tính>:3000` trên điện thoại.
+## 🗄️ Cấu trúc dữ liệu & Biến môi trường
 
-## 2) Đồng bộ máy + điện thoại (cùng một nhật ký)
-
-Cần một database online (Neon — miễn phí) và một chỗ host backend (Render — miễn phí).
-
-### Bước A — Tạo database online (Neon)
-1. Đăng ký tại https://neon.tech (dùng Google/GitHub).
-2. Tạo project mới → copy **connection string** (kiểu `postgresql://user:pass@ep-xxx.neon.tech/db?sslmode=require`).
-
-### Bước B — Chạy local với database online
-Tạo file `.env` ở thư mục này (dựa trên `.env.example`):
+Trong file `.env`:
+```env
+DATABASE_URL=postgresql://user:pass@ep-xxx.neon.tech/neondb?sslmode=require
+PORT=3000
 ```
-DATABASE_URL=postgresql://user:pass@ep-xxx.neon.tech/db?sslmode=require
-```
-Rồi:
-```bash
-npm install
-npm start
-```
-Giờ dữ liệu đã lưu trên cloud.
-
-### Bước C — Cài Git và đẩy code lên GitHub
-1. Cài Git: tải tại https://git-scm.com/downloads (chọn Windows). Cài xong mở lại terminal.
-2. Đăng ký tài khoản GitHub tại https://github.com (nếu chưa có).
-3. Trên GitHub: bấm **New repository** → đặt tên (vd `trung-tam-cam-xuc`) → **Create** (để Public, không tick README).
-4. Trong thư mục dự án, chạy lệnh (thay `ten-ban` bằng tên GitHub của bạn):
-```bash
-git init
-git add .
-git commit -m "Khởi tạo ứng dụng"
-git branch -M main
-git remote add origin https://github.com/ten-ban/trung-tam-cam-xuc.git
-git push -u origin main
-```
-> Khi push, Git sẽ hỏi đăng nhập — dùng **Personal Access Token** (GitHub → Settings → Developer settings → Tokens) làm mật khẩu, không dùng mật khẩu GitHub.
-
-### Bước D — Deploy lên Render để điện thoại truy cập
-1. Vào https://render.com → **New → Web Service** → kết nối repo GitHub vừa push.
-2. Cấu hình:
-   - Build Command: `npm install`
-   - Start Command: `npm start`
-3. Mục **Environment** → thêm biến: `DATABASE_URL` = chuỗi kết nối Neon (giống Bước A).
-4. Deploy xong, Render cấp URL kiểu `https://ten-ban.onrender.com` — mở trên điện thoại, dùng được liền, **cùng nhật ký với máy**.
-5. Trên điện thoại: mở URL → trình duyệt thường có mục **"Thêm vào màn hình chính"** — app sẽ chạy toàn màn hình như app thật.
-
-## Cài app lên màn hình điện thoại (PWA)
-
-App đã hỗ trợ PWA nên sau khi mở URL trên điện thoại:
-- **Android (Chrome):** menu ⋮ → **Add to Home screen** → sẽ hiện biểu tượng hoa 🌸 trên màn hình, mở như app.
-- **iPhone (Safari):** nút Share → **Add to Home Screen** → tương tự.
-
-App này sẽ mở toàn màn hình, có biểu tượng riêng — không khác gì app tải về.
-
-## Sao lưu
-
-Trong app có nút **"Tải về máy"** (xuất file JSON) và **"Nhập lại"** — giữ bản sao phòng khi cần.
-
-## Lưu ý riêng tư
-
-- Dữ liệu nằm trong database Neon của bạn + backend Render của bạn. Không bên thứ ba nào khác xem được.
-- Muốn khoá riêng tư hơn, có thể thêm mật khẩu truy cập sau.
+- Nếu có `DATABASE_URL`: Ứng dụng tự động kết nối Neon PostgreSQL (đồng bộ toàn bộ tài khoản, bài viết, tin nhắn, chuỗi và thông báo giữa các thiết bị).
+- Nếu không có: Ứng dụng tự động lưu vào file JSON cục bộ trong thư mục `data/`.
