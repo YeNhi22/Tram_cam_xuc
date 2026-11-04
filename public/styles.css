@@ -671,8 +671,65 @@ body {
 }
 
 /* ================================================================
-   PARTICLES canvas — nền
+   TAB BAR
 ================================================================ */
+.tab-bar {
+  display: flex;
+  background: var(--card);
+  border-bottom: 1px solid var(--line);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 8px rgba(0,0,0,.06);
+}
+.tab-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: .2rem;
+  padding: .7rem .4rem;
+  border: none;
+  background: transparent;
+  color: var(--ink-soft);
+  font-family: inherit;
+  font-size: .78rem;
+  font-weight: 600;
+  cursor: pointer;
+  position: relative;
+  transition: color .15s;
+  border-bottom: 3px solid transparent;
+}
+.tab-btn:hover { color: var(--primary); }
+.tab-btn.is-active { color: var(--primary-dark); border-bottom-color: var(--primary); }
+.tab-icon { font-size: 1.3rem; line-height: 1; }
+.tab-label { font-size: .72rem; }
+.tab-badge {
+  position: absolute;
+  top: .35rem; right: calc(50% - 1.2rem);
+  background: var(--primary);
+  color: #fff;
+  font-size: .6rem;
+  font-weight: 700;
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* ================================================================
+   TAB PANELS
+================================================================ */
+.tab-panel { display: none; }
+.tab-panel.is-active { display: block; }
+
+/* Animation entry mới highlight */
+@keyframes highlight-new {
+  0%   { box-shadow: 0 0 0 0 color-mix(in srgb, var(--primary) 60%, transparent); }
+  50%  { box-shadow: 0 0 0 8px color-mix(in srgb, var(--primary) 10%, transparent); }
+  100% { box-shadow: var(--shadow); }
+}
+.entry.is-new { animation: highlight-new 1.5s ease; }
 #particles-canvas {
   position: fixed; inset: 0;
   pointer-events: none;
